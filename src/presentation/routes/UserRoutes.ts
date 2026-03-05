@@ -7,4 +7,8 @@ export async function userRoutes(fastify: FastifyInstance) {
   fastify.post("/login", (req, reply) =>
     fastify.userController.login(req, reply),
   );
+
+  fastify.patch("/update-details/:userId", (req, reply) =>
+    fastify.userController.updateDetails(req, reply),
+  );
 }
