@@ -60,16 +60,34 @@ export class User {
     return new User(props);
   }
 
-  updateName(newName: string, currentUserRole: Role) {
-    if (newName.length > User.MAX_NAME_LENGTH) {
-      throw new Error(`Name cannot exceed ${User.MAX_NAME_LENGTH} characters`);
+  updateFields(fields: {
+    name?: string;
+    phone?: string | null;
+    address?: string | null;
+  }) {
+    if (fields.name !== undefined) {
+      if (fields.name.length > User.MAX_NAME_LENGTH) {
+        throw new Error(
+          `Name cannot exceed ${User.MAX_NAME_LENGTH} characters`,
+        );
+      }
+      this.props.name = fields.name;
     }
 
-    if (currentUserRole != Role.ADMIN) {
-      throw new Error("Unauthorized: Only admins can update users");
+    if (fields.phone !== undefined) {
+      const phoneRegex = /^(\+63|0)?9\d{9}$/;
+      if (fields.phone && !phoneRegex.test(fields.phone)) {
+        throw new Error(
+          "Phone number must start with +63, 09, or 9 and have 10 digits after the prefix",
+        );
+      }
+      this.props.phone = fields.phone ?? null;
     }
 
-    this.props.name = newName;
+    if (fields.address !== undefined) {
+      this.props.address = fields.address;
+    }
+
     this.props.updatedAt = new Date();
   }
 
