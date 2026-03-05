@@ -2,5 +2,7 @@ import { User } from "domain/entities/User";
 
 export interface IUserRepository {
   create(user: User): Promise<void>;
-  findByEmail(email: string): Promise<User | null>
+  findByEmail(email: string): Promise<User | null>;
+  findByID(id: string): Promise<User | null>;
+  updateDetails(user: User): Promise<void>;
 }
