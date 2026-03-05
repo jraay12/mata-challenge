@@ -6,7 +6,10 @@ import { Role } from "../../domain/entities/value-objects/Roles";
 import { PasswordHasher } from "../../domain/services/PasswordHasher";
 
 export class CreateUserUsecase {
-  constructor(private userRepo: IUserRepository, private passwordHasher: PasswordHasher) {}
+  constructor(
+    private userRepo: IUserRepository,
+    private passwordHasher: PasswordHasher,
+  ) {}
 
   async execute(data: CreateUserDTO): Promise<UserResponseDTO> {
     const existingUser = await this.userRepo.findByEmail(data.email);
@@ -18,11 +21,13 @@ export class CreateUserUsecase {
       name: data.name,
       password: data.password,
       role: data.role ?? Role.STAFF,
+      address: data.address ?? null,
+      phone: data.phone ?? null,
     });
 
-    const passwordHash = await this.passwordHasher.hash(user.password)
+    const passwordHash = await this.passwordHasher.hash(user.password);
 
-    user.setPassword(passwordHash)
+    user.setPassword(passwordHash);
 
     await this.userRepo.create(user);
 
