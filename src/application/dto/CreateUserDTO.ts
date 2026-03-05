@@ -10,6 +10,8 @@ export const CreateUserSchema = z
     email: z.string().email("Invalid email format"),
     password: z.string().min(6, "Password must be at least 6 characters"),
     role: z.nativeEnum(Role).optional(),
+    phone: z.string().optional(),
+    address: z.string().optional(),
   })
   .strict();
 
