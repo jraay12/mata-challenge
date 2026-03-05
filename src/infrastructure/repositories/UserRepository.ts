@@ -6,13 +6,15 @@ export class UserRepository implements IUserRepository {
   constructor(private prisma: PrismaClient) {}
 
   async create(user: User): Promise<void> {
-    await this.prisma.user.create({
+    await this.prisma.customer.create({
       data: {
         id: user.id,
         name: user.name,
         email: user.email,
         password: user.password,
         role: user.role,
+        address: user.address,
+        phone: user.phone,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
       },
@@ -20,7 +22,7 @@ export class UserRepository implements IUserRepository {
   }
 
   async findByEmail(email: string): Promise<User | null> {
-    const user = await this.prisma.user.findUnique({
+    const user = await this.prisma.customer.findUnique({
       where: {
         email,
       },
