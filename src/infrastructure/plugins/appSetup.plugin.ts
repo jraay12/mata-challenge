@@ -6,6 +6,7 @@ import { CreateUserUsecase } from "../../application/usecase/CreateUserUsecase";
 import { UserController } from "../../presentation/controllers/UserController";
 import { JwtServiceImpl } from "../services/JwtServiceImpl";
 import { LoginUserUsecase } from "../../application/usecase/LoginUserUsecase";
+import { UpdateCustomerDetails } from "../../application/usecase/UpdateCustomerDetails";
 declare module "fastify" {
   interface FastifyInstance {
     userRepository: UserRepository;
@@ -13,7 +14,8 @@ declare module "fastify" {
     createUserUsecase: CreateUserUsecase;
     userController: UserController;
     jwtService: JwtServiceImpl;
-    loginUserUsecase: LoginUserUsecase
+    loginUserUsecase: LoginUserUsecase;
+    updateCustomerDetails: UpdateCustomerDetails;
   }
 }
 
@@ -36,16 +38,25 @@ const appSetupPlugin: FastifyPluginAsync = fp(async (fastify) => {
     userRepository,
     bcryptPasswordHasher,
   );
-  const loginUserUsecase = new LoginUserUsecase(userRepository, jwtService, bcryptPasswordHasher)
+  const loginUserUsecase = new LoginUserUsecase(
+    userRepository,
+    jwtService,
+    bcryptPasswordHasher,
+  );
+  const updateCustomerDetails = new UpdateCustomerDetails(userRepository);
 
   // Controllers
-  const userController = new UserController(createUserUsecase, loginUserUsecase);
+  const userController = new UserController(
+    createUserUsecase,
+    loginUserUsecase,
+    updateCustomerDetails,
+  );
 
   fastify.decorate("bcryptPasswordHasher", bcryptPasswordHasher);
   fastify.decorate("userRepository", userRepository);
   fastify.decorate("createUserUsecase", createUserUsecase);
   fastify.decorate("userController", userController);
-  fastify.decorate('loginUserUsecase', loginUserUsecase)
+  fastify.decorate("loginUserUsecase", loginUserUsecase);
 });
 
 export default appSetupPlugin;
