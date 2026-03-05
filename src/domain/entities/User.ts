@@ -46,6 +46,10 @@ export class User {
     });
   }
 
+  static fromPersistence(props: UserProps): User {
+    return new User(props);
+  }
+
   updateName(newName: string, currentUserRole: Role) {
     if (newName.length > User.MAX_NAME_LENGTH) {
       throw new Error(`Name cannot exceed ${User.MAX_NAME_LENGTH} characters`);
