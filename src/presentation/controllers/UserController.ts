@@ -6,11 +6,18 @@ import {
 import { FastifyReply, FastifyRequest } from "fastify";
 import { LoginUserUsecase } from "../../application/usecase/LoginUserUsecase";
 import { LoginSchema, LoginUserDTO } from "../../application/dto/LoginUserDTO";
-
+import { UpdateCustomerDetails } from "../../application/usecase/UpdateCustomerDetails";
+import {
+  UpdateCustomerDTO,
+  UpdateCustomerParams,
+  UpdateCustomerParamsSchema,
+  UpdateCustomerSchema,
+} from "../../application/dto/UpdateCustomerDTO";
 export class UserController {
   constructor(
     private createUserUsecase: CreateUserUsecase,
     private loginUserUsecase: LoginUserUsecase,
+    private updateCustomerDetails: UpdateCustomerDetails,
   ) {}
 
   createUser = async (
@@ -46,8 +53,27 @@ export class UserController {
         maxAge: 7 * 24 * 60 * 60,
       });
       reply.code(200).send({
-        token: accessToken
+        token: accessToken,
       });
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  updateDetails = async (
+    request: FastifyRequest,
+    reply: FastifyReply,
+  ): Promise<void> => {
+    try {
+      const params: UpdateCustomerParams = UpdateCustomerParamsSchema.parse(
+        request.params,
+      );
+      const userId = params.userId;
+      const dto: UpdateCustomerDTO = UpdateCustomerSchema.parse(request.body);
+
+      const result = await this.updateCustomerDetails.execute(userId, dto);
+
+      reply.code(200).send(result);
     } catch (error) {
       throw error;
     }
