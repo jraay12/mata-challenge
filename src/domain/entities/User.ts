@@ -7,6 +7,8 @@ export interface UserProps {
   email: string;
   password: string;
   role: Role;
+  address?: string | null;
+  phone?: string | null;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -40,6 +42,14 @@ export class User {
       throw new Error("Invalid email format");
     }
 
+    // Philippine phone number formats: +63XXXXXXXXX, 09XXXXXXXXX, 9XXXXXXXXX
+    const phoneRegex = /^(\+63|0)?9\d{9}$/;
+    if (props.phone && !phoneRegex.test(props.phone)) {
+      throw new Error(
+        "Phone number must start with +63, 09, or 9 and have 10 digits after the prefix",
+      );
+    }
+
     return new User({
       ...props,
       id: crypto.randomUUID(),
@@ -69,6 +79,8 @@ export class User {
       name: this.name,
       email: this.email,
       role: this.role,
+      phone: this.phone,
+      address: this.address,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
     };
@@ -99,5 +111,13 @@ export class User {
   }
   get updatedAt() {
     return this.props.updatedAt!;
+  }
+
+  get phone() {
+    return this.props.phone!;
+  }
+
+  get address() {
+    return this.props.address!;
   }
 }
