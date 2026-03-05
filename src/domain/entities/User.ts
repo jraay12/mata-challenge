@@ -74,6 +74,10 @@ export class User {
     };
   }
 
+  setPassword(hash: string) {
+    this.props.password = hash;
+  }
+
   // Getters
   get id() {
     return this.props.id;
