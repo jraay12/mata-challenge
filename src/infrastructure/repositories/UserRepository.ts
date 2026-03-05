@@ -36,8 +36,46 @@ export class UserRepository implements IUserRepository {
       email: user.email,
       password: user.password,
       role: user.role === "STAFF" ? DomainRole.STAFF : DomainRole.ADMIN,
+      address: user.address,
+      phone: user.phone,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
+    });
+  }
+
+  async findByID(id: string): Promise<User | null> {
+    const user = await this.prisma.customer.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!user) return null;
+
+    return User.fromPersistence({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      password: user.password,
+      role: user.role === "STAFF" ? DomainRole.STAFF : DomainRole.ADMIN,
+      address: user.address,
+      phone: user.phone,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    });
+  }
+
+  async updateDetails(user: User): Promise<void> {
+    await this.prisma.customer.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        address: user.address,
+        name: user.name,
+        phone: user.phone,
+        updatedAt: user.updatedAt,
+      },
     });
   }
 }
