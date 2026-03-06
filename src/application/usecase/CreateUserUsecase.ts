@@ -4,7 +4,7 @@ import { UserResponseDTO } from "../dto/UserResponseDTO";
 import { User } from "../../domain/entities/User";
 import { Role } from "../../domain/entities/value-objects/Roles";
 import { PasswordHasher } from "../../domain/services/PasswordHasher";
-
+import { ConflictError } from "../../domain/errors/ConflictError";
 export class CreateUserUsecase {
   constructor(
     private userRepo: IUserRepository,
@@ -14,7 +14,7 @@ export class CreateUserUsecase {
   async execute(data: CreateUserDTO): Promise<UserResponseDTO> {
     const existingUser = await this.userRepo.findByEmail(data.email);
 
-    if (existingUser) throw new Error("User email already exist!");
+    if (existingUser) throw new ConflictError("User email already exist!");
 
     const user = User.create({
       email: data.email,
