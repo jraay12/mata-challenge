@@ -50,6 +50,18 @@ export class Product {
     return data.map((product) => new Product(product));
   }
 
+  static fromPersistence(data: ProductProps): Product {
+    return new Product(data);
+  }
+
+  addStock(stock: number) {
+    if (stock !== undefined && stock <= 0)
+      throw new BadRequestError("Stock must be greater than zero");
+
+    this.props.stock = stock;
+    this.props.updatedAt = new Date()
+  }
+
   toJSON(): ProductResponseDTO {
     return {
       id: this.id,
