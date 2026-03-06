@@ -7,6 +7,8 @@ import { UserController } from "../../presentation/controllers/UserController";
 import { JwtServiceImpl } from "../services/JwtServiceImpl";
 import { LoginUserUsecase } from "../../application/usecase/LoginUserUsecase";
 import { UpdateCustomerDetails } from "../../application/usecase/UpdateCustomerDetails";
+import { NotFoundError } from "../../domain/errors/NotFoundError";
+
 declare module "fastify" {
   interface FastifyInstance {
     userRepository: UserRepository;
@@ -24,7 +26,7 @@ const appSetupPlugin: FastifyPluginAsync = fp(async (fastify) => {
   const refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET;
 
   if (!accessTokenSecret || !refreshTokenSecret) {
-    throw new Error(
+    throw new NotFoundError(
       "ACCESS_TOKEN_SECRET or REFRESH_TOKEN_SECRET is not defined in environment variables",
     );
   }
