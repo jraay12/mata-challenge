@@ -1,8 +1,8 @@
 import Fastify from "fastify";
 import { userRoutes } from "./presentation/routes/UserRoutes";
-import { registerErrorHandler } from "./infrastructure/errors/errorHandler";
 import prismaPlugin from "./infrastructure/prisma/prisma.plugin";
 import appSetupPlugin from "./infrastructure/plugins/appSetup.plugin";
+import { errorHandler } from "./infrastructure/errors/errorHandler";
 import cookie from "@fastify/cookie";
 
 export function buildApp() {
@@ -17,7 +17,7 @@ export function buildApp() {
     };
   });
 
-  registerErrorHandler(app);
+  app.setErrorHandler(errorHandler)
   app.register(prismaPlugin);
   app.register(appSetupPlugin);
   app.register(cookie, {
