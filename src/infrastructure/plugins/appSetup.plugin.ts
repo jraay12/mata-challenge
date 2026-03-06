@@ -8,6 +8,9 @@ import { JwtServiceImpl } from "../services/JwtServiceImpl";
 import { LoginUserUsecase } from "../../application/usecase/LoginUserUsecase";
 import { UpdateCustomerDetails } from "../../application/usecase/UpdateCustomerDetails";
 import { NotFoundError } from "../../domain/errors/NotFoundError";
+import { ProductController } from "../../presentation/controllers/ProductController";
+import { CreateProductUsecase } from "../../application/usecase/CreateProductUsecase";
+import { ProductRepository } from "../repositories/ProductRepository";
 
 declare module "fastify" {
   interface FastifyInstance {
@@ -18,6 +21,9 @@ declare module "fastify" {
     jwtService: JwtServiceImpl;
     loginUserUsecase: LoginUserUsecase;
     updateCustomerDetails: UpdateCustomerDetails;
+    productController: ProductController;
+    createProductUsecase: CreateProductUsecase;
+    productRepository: ProductRepository;
   }
 }
 
@@ -33,6 +39,7 @@ const appSetupPlugin: FastifyPluginAsync = fp(async (fastify) => {
 
   const bcryptPasswordHasher = new BcryptPasswordHasher();
   const userRepository = new UserRepository(fastify.prisma);
+  const productRepository = new ProductRepository(fastify.prisma);
   const jwtService = new JwtServiceImpl(accessTokenSecret, refreshTokenSecret);
 
   // Usecases
@@ -46,15 +53,18 @@ const appSetupPlugin: FastifyPluginAsync = fp(async (fastify) => {
     bcryptPasswordHasher,
   );
   const updateCustomerDetails = new UpdateCustomerDetails(userRepository);
-
+  const createProductUsecase = new CreateProductUsecase(productRepository);
+  
   // Controllers
   const userController = new UserController(
     createUserUsecase,
     loginUserUsecase,
     updateCustomerDetails,
   );
+  const productController = new ProductController(createProductUsecase);
 
   fastify.decorate("userController", userController);
+  fastify.decorate("productController", productController);
 });
 
 export default appSetupPlugin;
