@@ -12,4 +12,8 @@ export async function productRoutes(fastify: FastifyInstance) {
       reply: FastifyReply,
     ) => fastify.productController.getProduct(req, reply),
   );
+
+  fastify.patch("/:productId/add-stock", (req, reply) =>
+    fastify.productController.addStock(req, reply),
+  );
 }
