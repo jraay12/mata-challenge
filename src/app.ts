@@ -1,5 +1,6 @@
 import Fastify from "fastify";
 import { userRoutes } from "./presentation/routes/UserRoutes";
+import { productRoutes } from "./presentation/routes/ProductRoutes";
 import prismaPlugin from "./infrastructure/prisma/prisma.plugin";
 import appSetupPlugin from "./infrastructure/plugins/appSetup.plugin";
 import { errorHandler } from "./infrastructure/errors/errorHandler";
@@ -25,6 +26,7 @@ export function buildApp() {
   });
 
   app.register(userRoutes, { prefix: "/user" });
+  app.register(productRoutes, { prefix: "/product" });
 
   return app;
 }
