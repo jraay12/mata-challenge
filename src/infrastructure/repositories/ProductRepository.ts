@@ -1,4 +1,4 @@
-import { Product } from "domain/entities/Product";
+import { Product } from "../../domain/entities/Product";
 import { IProductRepository } from "../../domain/repositories/IProductRepository";
 import { PrismaClient } from "@prisma/client";
 export class ProductRepository implements IProductRepository {
@@ -14,5 +14,26 @@ export class ProductRepository implements IProductRepository {
         updatedAt: product.updatedAt,
       },
     });
+  }
+
+  async getAllProduct(
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<Product[]> {
+    const skip = (page - 1) * limit;
+    const product = await this.prisma.product.findMany({
+      skip,
+      take: limit,
+      orderBy: {
+        createdAt: "desc",
+      },
+      where: {
+        stock: {
+          gt: 0,
+        },
+      },
+    });
+
+    return Product.fromPersistenceArray(product);
   }
 }
