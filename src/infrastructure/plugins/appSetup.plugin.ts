@@ -11,7 +11,7 @@ import { NotFoundError } from "../../domain/errors/NotFoundError";
 import { ProductController } from "../../presentation/controllers/ProductController";
 import { CreateProductUsecase } from "../../application/usecase/CreateProductUsecase";
 import { ProductRepository } from "../repositories/ProductRepository";
-
+import { GetAllProductUsecase } from "../../application/usecase/GetAllProductUsecase";
 declare module "fastify" {
   interface FastifyInstance {
     userRepository: UserRepository;
@@ -24,6 +24,7 @@ declare module "fastify" {
     productController: ProductController;
     createProductUsecase: CreateProductUsecase;
     productRepository: ProductRepository;
+    getAllProductUsecase: GetAllProductUsecase;
   }
 }
 
@@ -54,6 +55,7 @@ const appSetupPlugin: FastifyPluginAsync = fp(async (fastify) => {
   );
   const updateCustomerDetails = new UpdateCustomerDetails(userRepository);
   const createProductUsecase = new CreateProductUsecase(productRepository);
+  const getAllProductUsecase = new GetAllProductUsecase(productRepository)
   
   // Controllers
   const userController = new UserController(
@@ -61,7 +63,7 @@ const appSetupPlugin: FastifyPluginAsync = fp(async (fastify) => {
     loginUserUsecase,
     updateCustomerDetails,
   );
-  const productController = new ProductController(createProductUsecase);
+  const productController = new ProductController(createProductUsecase, getAllProductUsecase);
 
   fastify.decorate("userController", userController);
   fastify.decorate("productController", productController);
