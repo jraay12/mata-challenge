@@ -1,5 +1,6 @@
 import { Role } from "./value-objects/Roles";
 import { UserResponseDTO } from "application/dto/UserResponseDTO";
+import { BadRequestError } from "../../domain/errors/BadRequestError";
 import crypto from "crypto";
 export interface UserProps {
   id: string;
@@ -28,24 +29,24 @@ export class User {
 
   static create(props: Omit<UserProps, "id" | "createdAt" | "updatedAt">) {
     if (props.name.length > User.MAX_NAME_LENGTH) {
-      throw new Error(`Name cannot exceed ${User.MAX_NAME_LENGTH} characters`);
+      throw new BadRequestError(`Name cannot exceed ${User.MAX_NAME_LENGTH} characters`);
     }
 
     if (props.password.length < User.MIN_PASSWORD_LENGTH) {
-      throw new Error(
+      throw new BadRequestError(
         `Password must be at least ${User.MIN_PASSWORD_LENGTH} characters`,
       );
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(props.email)) {
-      throw new Error("Invalid email format");
+      throw new BadRequestError("Invalid email format");
     }
 
     // Philippine phone number formats: +63XXXXXXXXX, 09XXXXXXXXX, 9XXXXXXXXX
     const phoneRegex = /^(\+63|0)?9\d{9}$/;
     if (props.phone && !phoneRegex.test(props.phone)) {
-      throw new Error(
+      throw new BadRequestError(
         "Phone number must start with +63, 09, or 9 and have 10 digits after the prefix",
       );
     }
@@ -67,7 +68,7 @@ export class User {
   }) {
     if (fields.name !== undefined) {
       if (fields.name.length > User.MAX_NAME_LENGTH) {
-        throw new Error(
+        throw new BadRequestError(
           `Name cannot exceed ${User.MAX_NAME_LENGTH} characters`,
         );
       }
@@ -77,7 +78,7 @@ export class User {
     if (fields.phone !== undefined) {
       const phoneRegex = /^(\+63|0)?9\d{9}$/;
       if (fields.phone && !phoneRegex.test(fields.phone)) {
-        throw new Error(
+        throw new BadRequestError(
           "Phone number must start with +63, 09, or 9 and have 10 digits after the prefix",
         );
       }
