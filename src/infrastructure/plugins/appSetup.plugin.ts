@@ -54,11 +54,7 @@ const appSetupPlugin: FastifyPluginAsync = fp(async (fastify) => {
     updateCustomerDetails,
   );
 
-  fastify.decorate("bcryptPasswordHasher", bcryptPasswordHasher);
-  fastify.decorate("userRepository", userRepository);
-  fastify.decorate("createUserUsecase", createUserUsecase);
   fastify.decorate("userController", userController);
-  fastify.decorate("loginUserUsecase", loginUserUsecase);
 });
 
 export default appSetupPlugin;
