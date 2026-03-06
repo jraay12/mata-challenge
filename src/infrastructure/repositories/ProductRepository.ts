@@ -36,4 +36,36 @@ export class ProductRepository implements IProductRepository {
 
     return Product.fromPersistenceArray(product);
   }
+
+  async addStock(product_id: string, stock: number): Promise<void> {
+    await this.prisma.product.update({
+      where: {
+        id: product_id,
+      },
+      data: {
+        stock: {
+          increment: stock,
+        },
+      },
+    });
+  }
+
+  async findById(product_id: string): Promise<Product | null> {
+    const product = await this.prisma.product.findUnique({
+      where: {
+        id: product_id,
+      },
+    });
+
+    if (!product) return null;
+
+    return Product.fromPersistence({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      stock: product.stock,
+      createdAt: product.createdAt,
+      updatedAt: product.updatedAt,
+    });
+  }
 }
