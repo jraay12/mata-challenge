@@ -12,6 +12,7 @@ import { ProductController } from "../../presentation/controllers/ProductControl
 import { CreateProductUsecase } from "../../application/usecase/CreateProductUsecase";
 import { ProductRepository } from "../repositories/ProductRepository";
 import { GetAllProductUsecase } from "../../application/usecase/GetAllProductUsecase";
+import { AddProductStockUsecase } from "../../application/usecase/AddProductStocklUsecase";
 declare module "fastify" {
   interface FastifyInstance {
     userRepository: UserRepository;
@@ -25,6 +26,7 @@ declare module "fastify" {
     createProductUsecase: CreateProductUsecase;
     productRepository: ProductRepository;
     getAllProductUsecase: GetAllProductUsecase;
+    addProductStockUsecase: AddProductStockUsecase;
   }
 }
 
@@ -55,15 +57,20 @@ const appSetupPlugin: FastifyPluginAsync = fp(async (fastify) => {
   );
   const updateCustomerDetails = new UpdateCustomerDetails(userRepository);
   const createProductUsecase = new CreateProductUsecase(productRepository);
-  const getAllProductUsecase = new GetAllProductUsecase(productRepository)
-  
+  const getAllProductUsecase = new GetAllProductUsecase(productRepository);
+  const addProductStockUsecase = new AddProductStockUsecase(productRepository);
+
   // Controllers
   const userController = new UserController(
     createUserUsecase,
     loginUserUsecase,
     updateCustomerDetails,
   );
-  const productController = new ProductController(createProductUsecase, getAllProductUsecase);
+  const productController = new ProductController(
+    createProductUsecase,
+    getAllProductUsecase,
+    addProductStockUsecase,
+  );
 
   fastify.decorate("userController", userController);
   fastify.decorate("productController", productController);
