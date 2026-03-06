@@ -6,11 +6,13 @@ import {
 import { CreateProductUsecase } from "../../application/usecase/CreateProductUsecase";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { GetAllProductsQuery } from "../../application/dto/GetAllProductQuery";
+import { AddProductStockUsecase } from "../../application/usecase/AddProductStocklUsecase";
 
 export class ProductController {
   constructor(
     private createProduct: CreateProductUsecase,
     private getAllProductUsecase: GetAllProductUsecase,
+    private addProductStockUsecase: AddProductStockUsecase,
   ) {}
 
   create = async (
@@ -32,5 +34,20 @@ export class ProductController {
     reply
       .code(201)
       .send({ message: "Retrieve Products Succesfully", products });
+  };
+
+  addStock = async (
+    request: FastifyRequest,
+    reply: FastifyReply,
+  ): Promise<void> => {
+    const productId = (request.params as { productId: string }).productId;
+    const { stock } = request.body as { stock: number };
+    const updatedProduct = await this.addProductStockUsecase.execute(
+      productId,
+      stock,
+    );
+    reply.code(200).send({
+      message: `Stock added successfully to ${updatedProduct.name}`,
+    });
   };
 }
