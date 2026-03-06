@@ -1,4 +1,5 @@
-import { JwtService } from "domain/services/JwtService";
+import { BadRequestError } from "../../domain/errors/BadRequestError";
+import { JwtService } from "../../domain/services/JwtService";
 import jwt from "jsonwebtoken";
 
 export class JwtServiceImpl implements JwtService {
@@ -28,7 +29,7 @@ export class JwtServiceImpl implements JwtService {
     try {
       return jwt.verify(token, this.accessTokenSecret) as T;
     } catch (error) {
-      throw new Error("Invalid or expired token!");
+      throw new BadRequestError("Invalid or expired token!");
     }
   }
 
@@ -36,7 +37,7 @@ export class JwtServiceImpl implements JwtService {
     try {
       return jwt.verify(token, this.refreshTokenSecret) as T;
     } catch (error) {
-      throw new Error("Invalid or expired token!");
+      throw new BadRequestError("Invalid or expired token!");
     }
   }
 }
